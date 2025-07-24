@@ -1,0 +1,588 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIRENA - Alertas de Emergencia</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f7fa;
+            color: #333;
+        }
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            color: #0d1b2a;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .login-form {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .btn-alerta {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            padding: 25px;
+            margin: 20px 0;
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-size: 20px;
+            font-weight: bold;
+            text-align: center;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+        }
+        .btn-alerta:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+        .btn-alerta i {
+            margin-right: 15px;
+            font-size: 24px;
+        }
+        #btn-policia {
+            background-color: #0D47A1;
+        }
+        #btn-bomberos {
+            background-color: #E53935;
+        }
+        #btn-hospital {
+            background-color: #1B5E20;
+        }
+        .mensaje {
+            text-align: center;
+            margin-top: 30px;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 16px;
+            display: none;
+            border: 1px solid transparent;
+        }
+        .loading {
+            background-color: #fff3cd;
+            color: #856404;
+            border-color: #ffeeba;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            border-color: #c3e6cb;
+        }
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border-color: #f5c6cb;
+        }
+        .warning {
+            background-color: #fff3cd;
+            color: #856404;
+            border-color: #ffeeba;
+        }
+        #mapa {
+            height: 300px;
+            width: 100%;
+            margin: 20px 0;
+            display: none;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+        }
+        #confirmar-ubicacion {
+            display: none;
+            width: 100%;
+            padding: 12px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        #direccion-info {
+            margin: 10px 0;
+            padding: 10px;
+            background: #f0f0f0;
+            border-radius: 5px;
+            display: none;
+        }
+        #opciones-ubicacion {
+            margin-top: 15px;
+            display: none;
+        }
+        .btn-opcion {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 10px;
+            background: #607D8B;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        #direccion-manual-container {
+            display: none;
+            margin-top: 15px;
+        }
+        #direccion-input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .btn-direccion {
+            width: 100%;
+            padding: 12px;
+            background: #FF9800;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        .btn-login {
+            width: 100%;
+            padding: 12px;
+            background: #1565c0;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .btn-login:hover {
+            background: #0d47a1;
+        }
+        #alertas-container {
+            display: none;
+        }
+        #user-panel {
+            display: none;
+            text-align: right;
+            margin-bottom: 15px;
+            padding: 10px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        #user-name {
+            margin-right: 10px;
+            font-weight: bold;
+        }
+        #btn-logout {
+            padding: 5px 10px;
+            background: #f44336;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="user-panel">
+            <span id="user-name"></span>
+            <button id="btn-logout">Cerrar Sesión</button>
+        </div>
+
+        <h1><i class="fas fa-bell"></i> ALERTAS SIRENA</h1>
+
+        <div class="login-form" id="login-form">
+            <h2>Iniciar Sesión</h2>
+            <input type="text" id="dni" placeholder="DNI / LC / LE / Pasaporte">
+            <input type="password" id="clave" placeholder="Contraseña">
+            <button class="btn-login" id="btn-login">Ingresar</button>
+            <div id="mensaje-login" class="mensaje"></div>
+        </div>
+
+        <div id="alertas-container">
+            <button id="btn-policia" class="btn-alerta">
+                <i class="fas fa-shield-alt"></i> ALERTA POLICÍA
+            </button>
+            <button id="btn-bomberos" class="btn-alerta">
+                <i class="fas fa-fire-extinguisher"></i> ALERTA BOMBEROS
+            </button>
+            <button id="btn-hospital" class="btn-alerta">
+                <i class="fas fa-ambulance"></i> ALERTA HOSPITAL
+            </button>
+
+            <div id="mensaje-envio" class="mensaje"></div>
+
+            <div id="opciones-ubicacion">
+                <button id="btn-ubicacion-auto" class="btn-opcion">
+                    <i class="fas fa-map-marker-alt"></i> Usar mi ubicación actual
+                </button>
+                <button id="btn-ubicacion-manual" class="btn-opcion">
+                    <i class="fas fa-edit"></i> Ingresar dirección manualmente
+                </button>
+            </div>
+
+            <div id="mapa"></div>
+            <div id="direccion-info"></div>
+            <button id="confirmar-ubicacion">CONFIRMAR UBICACIÓN Y ENVIAR ALERTA</button>
+
+            <div id="direccion-manual-container">
+                <input type="text" id="direccion-input" placeholder="Ej: Av. Corrientes 1234, CABA">
+                <button id="btn-buscar-direccion" class="btn-direccion">
+                    <i class="fas fa-search"></i> Buscar dirección
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBj_nGxkrw8V-cBP8MRbLqaUcRiQrLmKnY&libraries=places&callback=initMap" async defer></script>
+    <script>
+        // Variables para el mapa y ubicación
+        let mapa;
+        let marcador;
+        let geocoder;
+        let tipoAlertaActual;
+        let direccionCompleta = '';
+        let coordenadasActuales = null;
+        let usuarioAutenticado = null;
+
+        // Inicializar mapa
+        function initMap() {
+            geocoder = new google.maps.Geocoder();
+        }
+
+        // Función de login actualizada
+        document.getElementById('btn-login').addEventListener('click', async function() {
+            const dni = document.getElementById('dni').value.trim();
+            const clave = document.getElementById('clave').value.trim();
+            const mensajeDiv = document.getElementById('mensaje-login');
+
+            if (!dni || !clave) {
+                mostrarMensaje(mensajeDiv, '<i class="fas fa-exclamation-triangle"></i> DNI y contraseña son requeridos', 'error');
+                return;
+            }
+
+            mostrarMensaje(mensajeDiv, '<i class="fas fa-spinner fa-spin"></i> Verificando credenciales...', 'loading');
+
+            try {
+                const response = await fetch('login.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `documento_identidad=${encodeURIComponent(dni)}&contrasena=${encodeURIComponent(clave)}`
+                });
+
+                const data = await response.json();
+
+                if (data.estado === 'ok') {
+                    usuarioAutenticado = {
+                        dni: dni,
+                        nombre: data.nombre || 'Usuario',
+                        telefono: data.telefono || '',
+                        token: data.token,
+                        datos: data.datos_completos || {}
+                    };
+                    
+                    // Guardar en ambos almacenamientos
+                    localStorage.setItem('sirena_session', JSON.stringify(usuarioAutenticado));
+                    sessionStorage.setItem('sirena_auth', 'true');
+                    
+                    // Ocultar login y mostrar alertas
+                    document.getElementById('login-form').style.display = 'none';
+                    document.getElementById('alertas-container').style.display = 'block';
+                    mostrarMensaje(mensajeDiv, `<i class="fas fa-check-circle"></i> Bienvenido ${usuarioAutenticado.nombre}`, 'success');
+                    showUserInfo();
+                } else {
+                    mostrarMensaje(mensajeDiv, `<i class="fas fa-times-circle"></i> ${data.mensaje || 'Credenciales incorrectas'}`, 'error');
+                }
+            } catch (error) {
+                mostrarMensaje(mensajeDiv, '<i class="fas fa-times-circle"></i> Error de conexión', 'error');
+                console.error('Login error:', error);
+            }
+        });
+
+        // Funcionalidad de alertas y ubicación
+        function mostrarOpcionesUbicacion(tipoAlerta) {
+            tipoAlertaActual = tipoAlerta;
+            document.getElementById('opciones-ubicacion').style.display = 'block';
+            document.getElementById('mapa').style.display = 'none';
+            document.getElementById('direccion-info').style.display = 'none';
+            document.getElementById('confirmar-ubicacion').style.display = 'none';
+            document.getElementById('direccion-manual-container').style.display = 'none';
+        }
+
+        function obtenerUbicacionAutomatica() {
+            const mensajeDiv = document.getElementById('mensaje-envio');
+            mostrarMensaje(mensajeDiv, '<i class="fas fa-spinner fa-spin"></i> Obteniendo ubicación...', 'loading');
+
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const lat = position.coords.latitude;
+                        const lng = position.coords.longitude;
+                        coordenadasActuales = { lat, lng };
+                        mostrarMapaConUbicacion(lat, lng);
+                        obtenerDireccionExacta(lat, lng);
+                    },
+                    (error) => {
+                        mostrarMensaje(mensajeDiv, `<i class="fas fa-exclamation-triangle"></i> No se pudo obtener ubicación<br><small>Por favor ingresa tu dirección manualmente</small>`, 'warning');
+                        document.getElementById('direccion-manual-container').style.display = 'block';
+                        document.getElementById('opciones-ubicacion').style.display = 'none';
+                    },
+                    { enableHighAccuracy: true, timeout: 10000 }
+                );
+            } else {
+                document.getElementById('direccion-manual-container').style.display = 'block';
+                document.getElementById('opciones-ubicacion').style.display = 'none';
+            }
+        }
+
+        function mostrarMapaConUbicacion(lat, lng) {
+            const mapaDiv = document.getElementById('mapa');
+            mapaDiv.style.display = 'block';
+            document.getElementById('confirmar-ubicacion').style.display = 'block';
+            document.getElementById('opciones-ubicacion').style.display = 'none';
+            document.getElementById('direccion-manual-container').style.display = 'none';
+
+            mapa = new google.maps.Map(mapaDiv, {
+                center: { lat: lat, lng: lng },
+                zoom: 17,
+                streetViewControl: false
+            });
+
+            marcador = new google.maps.Marker({
+                position: { lat: lat, lng: lng },
+                map: mapa,
+                draggable: true,
+                title: "Arrástrame a tu ubicación exacta"
+            });
+
+            google.maps.event.addListener(marcador, 'dragend', (event) => {
+                const newLat = event.latLng.lat();
+                const newLng = event.latLng.lng();
+                coordenadasActuales = { lat: newLat, lng: newLng };
+                obtenerDireccionExacta(newLat, newLng);
+            });
+
+            google.maps.event.addListener(mapa, 'click', (event) => {
+                marcador.setPosition(event.latLng);
+                const newLat = event.latLng.lat();
+                const newLng = event.latLng.lng();
+                coordenadasActuales = { lat: newLat, lng: newLng };
+                obtenerDireccionExacta(newLat, newLng);
+            });
+        }
+
+        function obtenerDireccionExacta(lat, lng) {
+            geocoder.geocode({ location: { lat, lng } }, (results, status) => {
+                if (status === 'OK' && results[0]) {
+                    direccionCompleta = results[0].formatted_address;
+                    document.getElementById('direccion-info').innerHTML = `<strong>Dirección exacta:</strong><br>${direccionCompleta}`;
+                    document.getElementById('direccion-info').style.display = 'block';
+                }
+            });
+        }
+
+        function buscarDireccionManual() {
+            const direccion = document.getElementById('direccion-input').value;
+            if (!direccion) return;
+
+            const mensajeDiv = document.getElementById('mensaje-envio');
+            mostrarMensaje(mensajeDiv, '<i class="fas fa-spinner fa-spin"></i> Buscando dirección...', 'loading');
+
+            geocoder.geocode({ address: direccion }, (results, status) => {
+                if (status === 'OK' && results[0]) {
+                    const location = results[0].geometry.location;
+                    coordenadasActuales = {
+                        lat: location.lat(),
+                        lng: location.lng()
+                    };
+                    mostrarMapaConUbicacion(coordenadasActuales.lat, coordenadasActuales.lng);
+                    obtenerDireccionExacta(coordenadasActuales.lat, coordenadasActuales.lng);
+                    document.getElementById('direccion-manual-container').style.display = 'none';
+                } else {
+                    mostrarMensaje(mensajeDiv, '<i class="fas fa-times-circle"></i> Dirección no encontrada', 'error');
+                }
+            });
+        }
+
+        async function enviarAlerta() {
+            const mensajeDiv = document.getElementById('mensaje-envio');
+
+            if (!coordenadasActuales || !direccionCompleta) {
+                mostrarMensaje(mensajeDiv, '<i class="fas fa-exclamation-triangle"></i> Faltan datos de ubicación.', 'warning');
+                return;
+            }
+
+            mostrarMensaje(mensajeDiv, '<i class="fas fa-spinner fa-spin"></i> Enviando alerta...', 'loading');
+
+            const alertaData = new URLSearchParams();
+            alertaData.append('tipo', tipoAlertaActual);
+            alertaData.append('lat', coordenadasActuales.lat);
+            alertaData.append('lng', coordenadasActuales.lng);
+            alertaData.append('direccion', direccionCompleta);
+            alertaData.append('timestamp', Date.now());
+            alertaData.append('dni', usuarioAutenticado.dni);
+            alertaData.append('token', usuarioAutenticado.token);
+
+            try {
+                const response = await fetch('recibir_alerta.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: alertaData
+                });
+
+                const data = await response.json();
+
+                if (data.estado === 'ok') {
+                    mostrarMensaje(mensajeDiv, '<i class="fas fa-check-circle"></i> Alerta enviada correctamente!', 'success');
+                    setTimeout(() => {
+                        resetearInterfaz();
+                        window.location.href = `chat.html?destino=${tipoAlertaActual}&dni=${usuarioAutenticado.dni}&token=${usuarioAutenticado.token}`;
+                    }, 2000);
+                } else {
+                    mostrarMensaje(mensajeDiv, `<i class="fas fa-times-circle"></i> ${data.mensaje || 'Error al enviar alerta'}`, 'error');
+                }
+            } catch (error) {
+                mostrarMensaje(mensajeDiv, '<i class="fas fa-times-circle"></i> Error de conexión', 'error');
+                console.error('Alerta error:', error);
+            }
+        }
+
+        function resetearInterfaz() {
+            document.getElementById('opciones-ubicacion').style.display = 'none';
+            document.getElementById('mapa').style.display = 'none';
+            document.getElementById('direccion-info').style.display = 'none';
+            document.getElementById('confirmar-ubicacion').style.display = 'none';
+            document.getElementById('direccion-manual-container').style.display = 'none';
+            document.getElementById('mensaje-envio').style.display = 'none';
+            coordenadasActuales = null;
+            direccionCompleta = '';
+            document.getElementById('direccion-input').value = '';
+        }
+
+        function mostrarMensaje(elemento, mensaje, tipo) {
+            elemento.innerHTML = mensaje;
+            elemento.className = `mensaje ${tipo}`;
+            elemento.style.display = 'block';
+        }
+
+        // Mostrar información del usuario
+        function showUserInfo() {
+            if (usuarioAutenticado) {
+                document.getElementById('user-name').textContent = usuarioAutenticado.nombre;
+                document.getElementById('user-panel').style.display = 'block';
+            }
+        }
+
+        // Función para cerrar sesión
+        function logout() {
+            localStorage.removeItem('sirena_session');
+            sessionStorage.removeItem('sirena_auth');
+            usuarioAutenticado = null;
+            document.getElementById('login-form').style.display = 'block';
+            document.getElementById('alertas-container').style.display = 'none';
+            document.getElementById('user-panel').style.display = 'none';
+            resetearInterfaz();
+        }
+
+        // Verificar sesión al cargar - Función actualizada
+        function checkSession() {
+            // Verificar primero si hay parámetros de autenticación en la URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const authParam = urlParams.get('auth');
+            
+            // Si viene de un login exitoso (auth=1)
+            if (authParam === '1') {
+                // 1. Obtener la sesión de localStorage
+                const savedSession = localStorage.getItem('sirena_session');
+                
+                if (savedSession) {
+                    try {
+                        usuarioAutenticado = JSON.parse(savedSession);
+                        
+                        // Establecer flag de sesión activa
+                        sessionStorage.setItem('sirena_auth', 'true');
+                        
+                        // Limpiar parámetros de la URL sin recargar
+                        if (window.history.replaceState) {
+                            window.history.replaceState({}, document.title, window.location.pathname);
+                        }
+                        
+                        // Mostrar interfaz autenticada
+                        document.getElementById('login-form').style.display = 'none';
+                        document.getElementById('alertas-container').style.display = 'block';
+                        showUserInfo();
+                        
+                        return; // Salir de la función después de manejar el auth=1
+                    } catch (e) {
+                        console.error('Error parsing session data:', e);
+                    }
+                }
+            }
+            
+            // Verificación normal de sesión (para cuando no hay auth=1)
+            const sessionAuth = sessionStorage.getItem('sirena_auth');
+            const savedSession = localStorage.getItem('sirena_session');
+            
+            if (sessionAuth && savedSession) {
+                try {
+                    usuarioAutenticado = JSON.parse(savedSession);
+                    document.getElementById('login-form').style.display = 'none';
+                    document.getElementById('alertas-container').style.display = 'block';
+                    showUserInfo();
+                } catch (e) {
+                    console.error('Error parsing session data:', e);
+                    logout();
+                }
+            } else {
+                logout();
+            }
+        }
+
+        // Event listeners
+        document.getElementById('btn-policia').addEventListener('click', () => mostrarOpcionesUbicacion('policia'));
+        document.getElementById('btn-bomberos').addEventListener('click', () => mostrarOpcionesUbicacion('bomberos'));
+        document.getElementById('btn-hospital').addEventListener('click', () => mostrarOpcionesUbicacion('hospital'));
+
+        document.getElementById('btn-ubicacion-auto').addEventListener('click', obtenerUbicacionAutomatica);
+        document.getElementById('btn-ubicacion-manual').addEventListener('click', () => {
+            document.getElementById('direccion-manual-container').style.display = 'block';
+            document.getElementById('opciones-ubicacion').style.display = 'none';
+        });
+
+        document.getElementById('btn-buscar-direccion').addEventListener('click', buscarDireccionManual);
+        document.getElementById('confirmar-ubicacion').addEventListener('click', enviarAlerta);
+        document.getElementById('btn-logout').addEventListener('click', logout);
+
+        // Inicializar
+        initMap();
+        checkSession();
+    </script>
+</body>
+</html>

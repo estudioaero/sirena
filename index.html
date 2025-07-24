@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cargar Datos de Usuario</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background-color: #f4f4f4; }
+        .container { background-color: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); max-width: 800px; margin: auto; }
+        h2 { text-align: center; color: #333; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; color: #333; }
+        input[type="text"], input[type="password"], input[type="email"], input[type="tel"], textarea, input[type="date"] {
+            width: calc(100% - 22px); padding: 10px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box;
+        }
+        input[type="checkbox"] { margin-right: 10px; }
+        button { background-color: #5cb85c; color: white; padding: 10px 15px; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; width: 100%; }
+        button:hover { background-color: #4cae4c; }
+        .half-width { width: calc(50% - 10px); display: inline-block; }
+        .full-width { width: 100%; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Cargar Datos de Usuario</h2>
+        <form action="upload.php" method="POST">
+            <div class="form-group">
+                <label for="marca_temporal">Marca Temporal:</label>
+                <input type="text" id="marca_temporal" name="marca_temporal" required>
+            </div>
+            <div class="form-group">
+                <label for="nombre_usuario">Nombre de Usuario:</label>
+                <input type="text" id="nombre_usuario" name="nombre_usuario" required>
+            </div>
+            <div class="form-group">
+                <label for="telefono_whatsapp">Teléfono WhatsApp:</label>
+                <input type="tel" id="telefono_whatsapp" name="telefono_whatsapp" required>
+            </div>
+            <div class="form-group">
+                <label for="telefono_whatsapp_2">Teléfono WhatsApp 2 (Opcional):</label>
+                <input type="tel" id="telefono_whatsapp_2" name="telefono_whatsapp_2">
+            </div>
+            <div class="form-group">
+                <label for="nombres_apellidos">Nombres y Apellidos:</label>
+                <input type="text" id="nombres_apellidos" name="nombres_apellidos" required>
+            </div>
+            <div class="form-group">
+                <label for="documento_identidad">Documento de Identidad:</label>
+                <input type="text" id="documento_identidad" name="documento_identidad" required>
+            </div>
+            <div class="form-group">
+                <label for="contrasena">Contraseña:</label>
+                <input type="password" id="contrasena" name="contrasena" required>
+            </div>
+            <div class="form-group">
+                <label for="domicilio">Domicilio:</label>
+                <textarea id="domicilio" name="domicilio" rows="3" required></textarea>
+            </div>
+            <div class="form-group">
+                <label for="tipo_residencia">Tipo de Residencia:</label>
+                <input type="text" id="tipo_residencia" name="tipo_residencia">
+            </div>
+            <div class="form-group">
+                <label for="entre_calle">Entre Calle:</label>
+                <input type="text" id="entre_calle" name="entre_calle">
+            </div>
+            <div class="form-group">
+                <label for="y_calle">Y Calle:</label>
+                <input type="text" id="y_calle" name="y_calle">
+            </div>
+            <div class="form-group">
+                <label for="datos_ubicacion">Datos de Ubicación (Coordenadas, etc.):</label>
+                <input type="text" id="datos_ubicacion" name="datos_ubicacion">
+            </div>
+            <div class="form-group">
+                <label for="barrio">Barrio:</label>
+                <input type="text" id="barrio" name="barrio">
+            </div>
+            <div class="form-group">
+                <label for="fecha_caducidad_alquiler">Fecha Caducidad Alquiler (si aplica):</label>
+                <input type="date" id="fecha_caducidad_alquiler" name="fecha_caducidad_alquiler">
+            </div>
+            <div class="form-group">
+                <label for="edad_2025">Edad en 2025:</label>
+                <input type="text" id="edad_2025" name="edad_2025">
+            </div>
+            <div class="form-group">
+                <label for="enfermedades_preexistentes">Enfermedades Preexistentes:</label>
+                <textarea id="enfermedades_preexistentes" name="enfermedades_preexistentes" rows="2"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="detalle_enfermedades">Detalle Enfermedades:</label>
+                <textarea id="detalle_enfermedades" name="detalle_enfermedades" rows="2"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="alergico_medicamentos">Alérgico a Medicamentos:</label>
+                <input type="text" id="alergico_medicamentos" name="alergico_medicamentos">
+            </div>
+            <div class="form-group">
+                <label for="detalle_alergias">Detalle Alergias:</label>
+                <textarea id="detalle_alergias" name="detalle_alergias" rows="2"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="socio_emergencia">Socio de Emergencia:</label>
+                <input type="text" id="socio_emergencia" name="socio_emergencia">
+            </div>
+            <div class="form-group">
+                <label for="detalle_emergencia">Detalle Emergencia:</label>
+                <textarea id="detalle_emergencia" name="detalle_emergencia" rows="2"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="clave_intrusos">Clave Intrusos:</label>
+                <input type="text" id="clave_intrusos" name="clave_intrusos">
+            </div>
+            <div class="form-group">
+                <label for="clave_salud">Clave Salud:</label>
+                <input type="text" id="clave_salud" name="clave_salud">
+            </div>
+            <div class="form-group">
+                <label for="clave_incendio">Clave Incendio:</label>
+                <input type="text" id="clave_incendio" name="clave_incendio">
+            </div>
+            <div class="form-group">
+                <label for="clave_violencia">Clave Violencia:</label>
+                <input type="text" id="clave_violencia" name="clave_violencia">
+            </div>
+            <div class="form-group">
+                <label for="clave_contacto">Clave Contacto:</label>
+                <input type="text" id="clave_contacto" name="clave_contacto">
+            </div>
+            <div class="form-group">
+                <label for="referido_1">Referido 1:</label>
+                <input type="text" id="referido_1" name="referido_1">
+            </div>
+            <div class="form-group">
+                <label for="referido_2">Referido 2:</label>
+                <input type="text" id="referido_2" name="referido_2">
+            </div>
+            <div class="form-group">
+                <input type="checkbox" id="aceptacion_terminos" name="aceptacion_terminos" value="1" required>
+                <label for="aceptacion_terminos" style="display: inline;">Acepto los términos y condiciones</label>
+            </div>
+            <button type="submit">Cargar Usuario</button>
+        </form>
+    </div>
+</body>
+</html>
+
